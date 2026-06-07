@@ -8,13 +8,11 @@ Supported template variables in .mu files:
   {node_name}  — node display name from config
   {mem_free}   — free heap memory in bytes
   {uptime}     — system uptime in seconds (epoch)
-  {sensor}     — output from all active peripherals
 
 Usage (MicroPython on ESP32-S3 / RP2040):
   1. Edit config.py — set WiFi credentials and interfaces
   2. Copy the urns/ folder, config.py, pages/, and this file to the device
-  3. Uncomment peripherals you have connected below
-  4. Run with: import example_nomadnet_node
+  3. Run with: import example_nomadnet_node
 """
 
 from config import WIFI_SSID, WIFI_PASS, NODE_NAME, DEBUG, CONFIG
@@ -23,32 +21,6 @@ import gc
 import time
 gc.collect()
 _boot_time = time.time()
-
-# ---- Peripherals ----
-# Uncomment the ones you have connected. Shared I2C bus for I2C devices.
-from machine import Pin, SoftI2C
-i2c = SoftI2C(scl=Pin(6), sda=Pin(5), freq=100000)
-
-import peripherals.bme280_sensor as bme_sensor
-bme_sensor.init(i2c)
-
-# import peripherals.neopixel_led as neopixel_led
-# neopixel_led.init(pin=21)
-
-# import peripherals.gpio_control as gpio
-# gpio.init({"lamp": (2, "OUT")})
-
-# import peripherals.adc_reader as adc_reader
-# adc_reader.init({"battery": 1})
-
-# import peripherals.sds011_sensor as sds011_sensor
-# sds011_sensor.init(uart_id=1, tx_pin=43, rx_pin=44)  # also add sds011_sensor to active_peripherals
-
-# List all active peripherals here (must match uncommented imports above)
-active_peripherals = [bme_sensor]
-
-gc.collect()
-
 
 def connect_wifi(ssid, password, timeout=15):
     import sys
@@ -99,8 +71,7 @@ def load_pages(dest, pages_dir="pages"):
     """Load .mu pages from a directory and register them as request handlers.
 
     Each .mu file becomes a NomadNet page at /page/<filename>.
-    Template variables {node_name}, {mem_free}, {uptime}, {sensor} are
-    substituted at serve time.
+    Template variables {node_name}, {mem_free}, {uptime} are substituted at serve time.
     """
     import os
 
@@ -150,14 +121,6 @@ def load_pages(dest, pages_dir="pages"):
                 except:
                     page = page.replace(b"{mem_free}", b"?")
                 page = page.replace(b"{uptime}", fmt_uptime(time.time() - _boot_time).encode("utf-8"))
-                # Sensor data from all active peripherals
-                results = []
-                for p in active_peripherals:
-                    result = p.process("sensor")
-                    if result:
-                        results.append(result)
-                sensor_text = "\n  ".join(results) if results else "no sensor"
-                page = page.replace(b"{sensor}", sensor_text.encode("utf-8"))
                 return page
             return handler
 
@@ -302,7 +265,6 @@ def main():
         asyncio.create_task(initial_announce())
         asyncio.create_task(reannounce_loop())
         # Start SDS011 periodic measurement if active
-        # if sds011_sensor.sensor: sds011_sensor.start()
         await _original_run()
 
     try:
