@@ -113,13 +113,13 @@ CONFIG = {
         # ---- TCP Client ----
         # Connects to a remote RNS TCP server (TCPServerInterface).
         # Uses HDLC framing, wire-compatible with reference Reticulum.
-        #{
-        #   "type": "TCPClientInterface",
-        #   "name": "VarnaTransport",
-        #   "enabled": True,
-        #   "target_host": "rn.varnatransport.com",
-        #   "target_port": 4243,
-        #},
+        {
+           "type": "TCPClientInterface",
+           "name": "TestComputer",
+           "enabled": True,
+           "target_host": "192.168.1.101",
+           "target_port": 4243,
+        },
 
         # ---- Serial (for RNode / wired link) ----
         # {
