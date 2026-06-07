@@ -66,57 +66,15 @@ CONFIG = {
         # ---- WiFi UDP ----
         # Broadcasts on the local LAN. Works with MeshChat / Sideband.
         # Set forward_ip to None for auto-detected subnet broadcast.
-         # {
-         #     "type": "UDPInterface",
-         #     "name": "WiFi UDP",
-         #     "enabled": True,
-         #     "listen_ip": "0.0.0.0",
-         #     "listen_port": 4242,
-         #     "forward_ip": "255.255.255.255",
-         #     "forward_port": 4242,
-         # },
-
-        # ---- E32 LoRa (EByte E32-900T20) ----
-        # Transparent serial LoRa with hex register config.
-        # Both nodes must share channel and air_rate.
-        #
-        # Wiring (RP2040 Zero example):
-        #   E32 M0  -> GPIO8  (mode select)
-        #   E32 M1  -> GPIO7  (mode select)
-        #   E32 TXD -> GPIO5  (MCU RX)
-        #   E32 RXD -> GPIO4  (MCU TX)
-        #   E32 AUX -> GPIO3  (busy signal)
-        #   E32 VCC -> 3.3V
-        #   E32 GND -> GND
-        #
-        # auto_configure: writes 6-byte hex register at boot to set
-        #   channel/rate/power. Set False if pre-configured via USB adapter.
-        #
-        # air_rate: 0 = 300bps, 1 = 1200, 2 = 2400 (default, max range)
-        #           3 = 4800, 4 = 9600, 5-7 = 19200
-        #
-        # tx_power: 0 = 20dBm, 1 = 17dBm, 2 = 14dBm, 3 = 10dBm
-        #
-        # channel: freq = 862 + channel * 1MHz (E32-900T)
-        #   6 = 868 MHz (EU ISM), 60 = 922 MHz (US ISM)
-        #
-         # {
-         #     "type": "E32Interface",
-         #     "name": "LoRa E32",
-         #     "enabled": True,
-         #     "uart_id": 1,
-         #     "tx_pin": 4,
-         #     "rx_pin": 5,
-         #     "speed": 9600,
-         #     "m0_pin": 15,
-         #     "m1_pin": 2,
-         #     "aux_pin": 6,
-         #     "auto_configure": False,
-         #     "timeout": 3000,
-         #     "channel": 6,
-         #     "air_rate": 2,
-         #     "tx_power": 3,
-         # },
+          {
+              "type": "UDPInterface",
+              "name": "WiFi UDP",
+              "enabled": True,
+              "listen_ip": "0.0.0.0",
+              "listen_port": 4242,
+              "forward_ip": "255.255.255.255",
+              "forward_port": 4242,
+          },
 
         # ---- SX1262 SPI LoRa (micropython-lib lora-sx126x driver) ----
         # Install: mpremote mip install lora-sx126x
@@ -139,14 +97,14 @@ CONFIG = {
         #
         {
             "type": "LoRaInterface",
-            "board": "esp32s3_cam_sx1262",
-            "name": "LoRa SX1262 CAM",
+            "board": "HTIT-WB32LAF",
+            "name": "Heltec V4 LoRa",
             "enabled": True,
-            "freq_khz": 868800,
+            "freq_khz": 915000,
             "sf": 8,
             "bw": "125",
             "coding_rate": 5,
-            "tx_power": 20,
+            "tx_power": 28,
             "preamble_len": 8,
             "crc_en": True,
             "syncword": 0x1424,
